@@ -1,0 +1,14 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: frontend
+  namespace: expense
+spec:
+  selector: # labels are used as selectors
+    app: frontend
+    tier: web
+    project: expense
+  ports:
+  - protocol: TCP
+    port: 80 # service port
+    targetPort: 8080
