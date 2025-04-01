@@ -43,3 +43,8 @@ spec:
             cpu: "150m"
          ports:
          - containerPort: 8080
+         volumeMounts:
+         - name: nginx
+           mountPath: /etc/nginx/nginx.conf
+           subPath: nginx.conf
+           readOnly: true
