@@ -7,7 +7,7 @@ metadata:
     alb.ingress.kubernetes.io/scheme: internet-facing
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTPS": 443}]'
-    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:124355635734:certificate/653a16c4-194d-41ad-81e0-727418e558f3
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:124355635734:certificate/efd7a3d1-07de-4e4e-85b9-15f81cd2d246
     alb.ingress.kubernetes.io/group.name: devops-bhavya
 spec:
   ingressClassName: alb
