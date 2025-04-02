@@ -2,7 +2,7 @@ apiVersion: elbv2.k8s.aws/v1beta1
 kind: TargetGroupBinding
 metadata:
   name: frontend
-  namesapce: expense
+  namespace: expense
 spec:
   serviceRef:
     name: frontend1 # route traffic to the awesome-service
