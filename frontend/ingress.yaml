@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: frontend-1
+  name: frontend
   namespace: expense
   annotations:
     alb.ingress.kubernetes.io/scheme: internet-facing
@@ -19,6 +19,6 @@ spec:
         path: "/"
         backend:
           service:
-            name: frontend-1
+            name: frontend
             port:
               number: 80
