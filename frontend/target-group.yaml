@@ -1,7 +1,7 @@
 apiVersion: elbv2.k8s.aws/v1beta1
 kind: TargetGroupBinding
 metadata:
-  name: frontend
+  name: expense-dev-frontend
   namespace: expense
 spec:
   serviceRef:
