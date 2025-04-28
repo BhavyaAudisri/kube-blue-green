@@ -129,17 +129,17 @@ spec:
 
             # Apply the generated targetgroup.yaml to the Kubernetes cluster
             kubectl apply -f /tmp/targetgroup-volume/targetgroup.yaml
-    resources:
-      limits:
-        cpu: "50m"
-        memory: "64Mi"
-      requests:
-        cpu: "20m"
-        memory: "32Mi"
-    volumeMounts:
-      - name: targetgroup-volume
-        mountPath: /tmp/targetgroup-volume
-        readOnly: false  # Set to false so it can write to the volume
+        resources:
+          limits:
+             cpu: "50m"
+             memory: "64Mi"
+          requests:
+            cpu: "20m"
+            memory: "32Mi"
+        volumeMounts:
+          - name: targetgroup-volume
+            mountPath: /tmp/targetgroup-volume
+            readOnly: false  # Set to false so it can write to the volume
 
       # env:
       #   - name: AWS_REGION
