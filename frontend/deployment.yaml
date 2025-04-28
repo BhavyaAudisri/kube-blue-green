@@ -84,51 +84,51 @@ spec:
         emptyDir: {}  # Empty directory volume for storing the target group YAML
 
     initContainers:
-    - name: fetch-parameter-store
-      image: amazon/aws-cli:latest
-      command:
-      - "/bin/sh"
-      - "-c"
-      - |
-        # Install kubectl
-        echo "Installing kubectl..."
-        curl -LO "https://dl.k8s.io/release/v1.26.0/bin/linux/amd64/kubectl"
-        chmod +x ./kubectl
-        mv ./kubectl /usr/local/bin/kubectl
+      - name: fetch-parameter-store
+        image: amazon/aws-cli:latest
+        command:
+          - "/bin/sh"
+          - "-c"
+          - |
+            # Install kubectl
+            echo "Installing kubectl..."
+            curl -LO "https://dl.k8s.io/release/v1.26.0/bin/linux/amd64/kubectl"
+            chmod +x ./kubectl
+            mv ./kubectl /usr/local/bin/kubectl
         
-        # Fetch ARN from AWS SSM Parameter Store
-        echo "Fetching ARN from AWS SSM Parameter Store..."
-        TG_ARN=$(aws ssm get-parameter \
-          --name "/expense/dev/aws_lb_target_group_arn" \
-          --with-decryption \
-          --query "Parameter.Value" \
-          --output text)
+            # Fetch ARN from AWS SSM Parameter Store
+            echo "Fetching ARN from AWS SSM Parameter Store..."
+            TG_ARN=$(aws ssm get-parameter \
+            --name "/expense/dev/aws_lb_target_group_arn" \
+            --with-decryption \
+            --query "Parameter.Value" \
+            --output text)
+ 
+            # Check if ARN retrieval was successful
+            if [ -z "$TG_ARN" ]; then
+            echo "Error: Failed to retrieve ARN from SSM."
+            exit 1
+            fi
+            echo "Successfully fetched ARN: $TG_ARN"
 
-        # Check if ARN retrieval was successful
-        if [ -z "$TG_ARN" ]; then
-          echo "Error: Failed to retrieve ARN from SSM."
-          exit 1
-        fi
-        echo "Successfully fetched ARN: $TG_ARN"
+            # Create the TargetGroupBinding YAML template with the fetched ARN
+            cat <<EOF > /tmp/targetgroup-volume/targetgroup.yaml
+            apiVersion: elbv2.k8s.aws/v1beta1
+            kind: TargetGroupBinding
+            metadata:
+             name: frontend
+             namespace: expense
+            spec:
+              serviceRef:
+                name: frontend
+                port: 80
+              targetGroupARN: ${TG_ARN}
+            EOF
 
-        # Create the TargetGroupBinding YAML template with the fetched ARN
-        cat <<EOF > /tmp/targetgroup-volume/targetgroup.yaml
-        apiVersion: elbv2.k8s.aws/v1beta1
-        kind: TargetGroupBinding
-        metadata:
-          name: frontend
-          namespace: expense
-        spec:
-          serviceRef:
-            name: frontend
-            port: 80
-          targetGroupARN: ${TG_ARN}
-        EOF
+            echo "Applied TargetGroupBinding successfully to the Kubernetes cluster."
 
-        echo "Applied TargetGroupBinding successfully to the Kubernetes cluster."
-
-        # Apply the generated targetgroup.yaml to the Kubernetes cluster
-        kubectl apply -f /tmp/targetgroup-volume/targetgroup.yaml
+            # Apply the generated targetgroup.yaml to the Kubernetes cluster
+            kubectl apply -f /tmp/targetgroup-volume/targetgroup.yaml
     resources:
       limits:
         cpu: "50m"
