@@ -102,30 +102,30 @@ spec:
             fi
             
             echo "Successfully fetched ARN: $TG_ARN"
-      resources:
-        limits:
-            memory: "64Mi"
-            cpu: "50m"
-        requests:
-            memory: "32Mi"
-            cpu: "20m"
-      volumeMounts:
-          - name: targetgroup-volume
-            mountPath: /tmp/targetgroup-volume
-            readOnly: true
-      env:
-        - name: AWS_REGION
-          value: us-east-1
-        - name: AWS_ACCESS_KEY_ID
-          valueFrom:
-            secretKeyRef:
-              name: aws-credentials
-              key: aws_access_key_id
-        - name: AWS_SECRET_ACCESS_KEY
-          valueFrom:
-            secretKeyRef:
-              name: aws-credentials
-              key: aws_secret_access_key
+      # resources:
+      #   limits:
+      #       memory: "64Mi"
+      #       cpu: "50m"
+      #   requests:
+      #       memory: "32Mi"
+      #       cpu: "20m"
+      # volumeMounts:
+      #     - name: targetgroup-volume
+      #       mountPath: /tmp/targetgroup-volume
+      #       readOnly: true
+      # env:
+      #   - name: AWS_REGION
+      #     value: us-east-1
+      #   - name: AWS_ACCESS_KEY_ID
+      #     valueFrom:
+      #       secretKeyRef:
+      #         name: aws-credentials
+      #         key: aws_access_key_id
+      #   - name: AWS_SECRET_ACCESS_KEY
+      #     valueFrom:
+      #       secretKeyRef:
+      #         name: aws-credentials
+      #         key: aws_secret_access_key
       containers:
       - name: nginx
         image: bhavyasomisetti/frontend:1.1.0
