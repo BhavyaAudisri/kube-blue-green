@@ -109,11 +109,11 @@ spec:
         requests:
             memory: "32Mi"
             cpu: "20m"
-        volumeMounts:
+      volumeMounts:
           - name: targetgroup-volume
             mountPath: /tmp/targetgroup-volume
             readOnly: true
-        env:
+      env:
         - name: AWS_REGION
           value: us-east-1
         - name: AWS_ACCESS_KEY_ID
