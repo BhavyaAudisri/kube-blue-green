@@ -102,7 +102,7 @@ spec:
             fi
             
             echo "Successfully fetched ARN: $TG_ARN"
-            resources:
+      resources:
         limits:
             memory: "64Mi"
             cpu: "50m"
