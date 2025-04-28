@@ -28,6 +28,7 @@ spec:
     name: frontend # route traffic to the frontend service
     port: 80
   targetGroupARN: ${TG_ARN}
+  targetType: ip
 EOF
 
 echo "Applied TargetGroupBinding successfully to the Kubernetes cluster."

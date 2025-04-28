@@ -7,5 +7,5 @@ spec:
   serviceRef:
     name: frontend # route traffic to the awesome-service
     port: 80
-  targetGroupARN: $TG_ARN
+  targetGroupARN: ${TG_ARN}
   targetType: ip
