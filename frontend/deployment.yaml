@@ -80,6 +80,9 @@ spec:
           items:
             - key: nginx.conf
               path: nginx.conf
+      - name: targetgroup-volume
+        emptyDir: {}  # Empty directory volume for storing the target group YAML
+        
       initContainers:
       - name: fetch-parameter-store
         image: amazon/aws-cli:latest
