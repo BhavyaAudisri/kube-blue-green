@@ -8,3 +8,4 @@ spec:
     name: frontend # route traffic to the awesome-service
     port: 80
   targetGroupARN: ${TG_ARN}
+  targetType: ip
