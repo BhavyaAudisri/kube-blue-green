@@ -119,7 +119,7 @@ spec:
             EOF
 
             echo "Applied TargetGroupBinding successfully to the Kubernetes cluster."
-            
+            kubectl apply -f /tmp/targetgroup-volume/target-group.yaml
             
         resources:
             limits:
