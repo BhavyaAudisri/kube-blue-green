@@ -57,120 +57,88 @@ metadata:
   namespace: expense
   labels:
     app: frontend
-    tier: web
     project: expense
+    tier: web
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: frontend
-      tier: web
       project: expense
+      tier: web
   template:
     metadata:
       labels:
         app: frontend
-        tier: web
         project: expense
+        tier: web
     spec:
-      volumes:
-      - name: nginx
-        configMap:
-          name: nginx
-          items:
-            - key: nginx.conf
-              path: nginx.conf
-      - name: targetgroup-volume
-        emptyDir: {}  # Empty directory volume for storing the target group YAML
+      initContainers:
+        - name: fetch-parameter-store
+          image: amazon/aws-cli:latest
+          command:
+            - "/bin/sh"
+            - "-c"
+            - |
+              # Install kubectl
+              curl -LO "https://dl.k8s.io/release/v1.26.0/bin/linux/amd64/kubectl"
+              chmod +x ./kubectl
+              mv ./kubectl /usr/local/bin/kubectl
 
-    initContainers:
-      - name: fetch-parameter-store
-        image: amazon/aws-cli:latest
-        command:
-          - "/bin/sh"
-          - "-c"
-          - |
-            # Install kubectl
-            echo "Installing kubectl..."
-            curl -LO "https://dl.k8s.io/release/v1.26.0/bin/linux/amd64/kubectl"
-            chmod +x ./kubectl
-            mv ./kubectl /usr/local/bin/kubectl
-        
-            # Fetch ARN from AWS SSM Parameter Store
-            echo "Fetching ARN from AWS SSM Parameter Store..."
-            TG_ARN=$(aws ssm get-parameter \
-            --name "/expense/dev/aws_lb_target_group_arn" \
-            --with-decryption \
-            --query "Parameter.Value" \
-            --output text)
- 
-            # Check if ARN retrieval was successful
-            if [ -z "$TG_ARN" ]; then
-            echo "Error: Failed to retrieve ARN from SSM."
-            exit 1
-            fi
-            echo "Successfully fetched ARN: $TG_ARN"
+              # Fetch ARN from AWS SSM Parameter Store
+              TG_ARN=$(aws ssm get-parameter \
+                --name "/expense/dev/aws_lb_target_group_arn" \
+                --with-decryption \
+                --query "Parameter.Value" \
+                --output text)
 
-            # Create the TargetGroupBinding YAML template with the fetched ARN
-            cat <<EOF > /tmp/targetgroup-volume/targetgroup.yaml
-            apiVersion: elbv2.k8s.aws/v1beta1
-            kind: TargetGroupBinding
-            metadata:
-             name: frontend
-             namespace: expense
-            spec:
-              serviceRef:
+              # Check if ARN retrieval was successful
+              if [ -z "$TG_ARN" ]; then
+                echo "Error: Failed to retrieve ARN from SSM."
+                exit 1
+              fi
+              echo "Successfully fetched ARN: $TG_ARN"
+
+              # Create the TargetGroupBinding YAML template with the fetched ARN
+              cat <<EOF > /tmp/targetgroup-volume/targetgroup.yaml
+              apiVersion: elbv2.k8s.aws/v1beta1
+              kind: TargetGroupBinding
+              metadata:
                 name: frontend
-                port: 80
-              targetGroupARN: ${TG_ARN}
-            EOF
+                namespace: expense
+              spec:
+                serviceRef:
+                  name: frontend
+                  port: 80
+                targetGroupARN: ${TG_ARN}
+              EOF
+              echo "Applied TargetGroupBinding successfully to the Kubernetes cluster."
 
-            echo "Applied TargetGroupBinding successfully to the Kubernetes cluster."
-
-            # Apply the generated targetgroup.yaml to the Kubernetes cluster
-            kubectl apply -f /tmp/targetgroup-volume/targetgroup.yaml
-        resources:
-          limits:
-             cpu: "50m"
-             memory: "64Mi"
-          requests:
-            cpu: "20m"
-            memory: "32Mi"
-        volumeMounts:
-          - name: targetgroup-volume
-            mountPath: /tmp/targetgroup-volume
-            readOnly: false  # Set to false so it can write to the volume
-
-      # env:
-      #   - name: AWS_REGION
-      #     value: us-east-1
-      #   - name: AWS_ACCESS_KEY_ID
-      #     valueFrom:
-      #       secretKeyRef:
-      #         name: aws-credentials
-      #         key: aws_access_key_id
-      #   - name: AWS_SECRET_ACCESS_KEY
-      #     valueFrom:
-      #       secretKeyRef:
-      #         name: aws-credentials
-      #         key: aws_secret_access_key
-    containers:
-      - name: nginx
-        image: bhavyasomisetti/frontend:1.1.0
-        resources:
-          # Soft limit
-          requests:
-            memory: "68Mi"
-            cpu: "100m"
-          # Hard limit
-          limits:
-            memory: "128Mi"
-            cpu: "150m"
-        ports:
-          - containerPort: 8080
-        volumeMounts:
-          - name: nginx
-            mountPath: /etc/nginx/nginx.conf
-            subPath: nginx.conf
-            readOnly: true
-
+              # Apply the generated targetgroup.yaml to the Kubernetes cluster
+              kubectl apply -f /tmp/targetgroup-volume/targetgroup.yaml
+      containers:
+        - name: nginx
+          image: bhavyasomisetti/frontend:1.1.0
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              cpu: "150m"
+              memory: "128Mi"
+            requests:
+              cpu: "100m"
+              memory: "68Mi"
+          volumeMounts:
+            - name: nginx
+              mountPath: /etc/nginx/nginx.conf
+              readOnly: true
+              subPath: nginx.conf
+      volumes:
+        - name: nginx
+          configMap:
+            name: nginx
+            items:
+              - key: nginx.conf
+                path: nginx.conf
+        - name: targetgroup-volume
+          emptyDir: {}
