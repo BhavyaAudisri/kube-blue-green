@@ -85,18 +85,24 @@ spec:
 
       initContainers:
       - name: fetch-parameter-store
-        image: bitnami/aws-cli:latest
+        image: amazon/aws-cli:latest
         command:
-          - /bin/sh
-          - -c
-          - |
-            # Fetch ARN from AWS SSM Parameter Store
-            echo "Fetching ARN from AWS SSM Parameter Store..."
-            TG_ARN=$(aws ssm get-parameter \
-              --name "/expense/dev/aws_lb_target_group_arn" \
-              --with-decryption \
-              --query "Parameter.Value" \
-              --output text)
+        - "/bin/sh"
+        - "-c"
+        - |
+        # Install kubectl
+         echo "Installing kubectl..."
+         curl -LO "https://dl.k8s.io/release/v1.26.0/bin/linux/amd64/kubectl"
+         chmod +x ./kubectl
+         mv ./kubectl /usr/local/bin/kubectl
+        
+        # Fetch ARN from AWS SSM Parameter Store
+         echo "Fetching ARN from AWS SSM Parameter Store..."
+         TG_ARN=$(aws ssm get-parameter \
+          --name "/expense/dev/aws_lb_target_group_arn" \
+          --with-decryption \
+          --query "Parameter.Value" \
+          --output text)
             
             # Check if ARN retrieval was successful
             if [ -z "$TG_ARN" ]; then
