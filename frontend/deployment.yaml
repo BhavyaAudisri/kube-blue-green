@@ -98,6 +98,7 @@ spec:
                 exit 1
               fi
               echo "Successfully fetched ARN: $TG_ARN"
+              mkdir -p /tmp/targetgroup-volume
 
               # Create the TargetGroupBinding YAML template with the fetched ARN
               cat <<EOF > /tmp/targetgroup-volume/targetgroup.yaml
