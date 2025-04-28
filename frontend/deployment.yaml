@@ -31,9 +31,9 @@ spec:
               path: nginx.conf 
          
     containers:
-          - name: nginx
-            image: bhavyasomisetti/frontend:1.1.0
-            resources:
+      - name: nginx
+        image: bhavyasomisetti/frontend:1.1.0
+        resources:
           # soft limit
             requests:
             memory: "68Mi"
@@ -43,9 +43,9 @@ spec:
             memory: "128Mi"
             cpu: "150m"
             ports:
-          - containerPort: 8080
-            volumeMounts:
-          - name: nginx
-            mountPath: /etc/nginx/nginx.conf
-            subPath: nginx.conf
-            readOnly: true
+      - containerPort: 8080
+        volumeMounts:
+            - name: nginx
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
