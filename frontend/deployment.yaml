@@ -118,17 +118,17 @@ spec:
             echo "Applied TargetGroupBinding successfully to the Kubernetes cluster."
             
             
-      resources:
-        limits:
-            memory: "64Mi"
-            cpu: "50m"
-        requests:
-            memory: "32Mi"
-            cpu: "20m"
-      volumeMounts:
-          - name: targetgroup-volume
-            mountPath: /tmp/targetgroup-volume
-            readOnly: true
+        resources:
+            limits:
+                memory: "64Mi"
+                cpu: "50m"
+            requests:
+                memory: "32Mi"
+                cpu: "20m"
+        volumeMounts:
+              - name: targetgroup-volume
+                mountPath: /tmp/targetgroup-volume
+                readOnly: true
       # env:
       #   - name: AWS_REGION
       #     value: us-east-1
