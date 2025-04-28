@@ -96,7 +96,7 @@ spec:
          chmod +x ./kubectl
          mv ./kubectl /usr/local/bin/kubectl
         
-        # Fetch ARN from AWS SSM Parameter Store
+         # Fetch ARN from AWS SSM Parameter Store
          echo "Fetching ARN from AWS SSM Parameter Store..."
          TG_ARN=$(aws ssm get-parameter \
           --name "/expense/dev/aws_lb_target_group_arn" \
@@ -104,7 +104,7 @@ spec:
           --query "Parameter.Value" \
           --output text)
             
-            # Check if ARN retrieval was successful
+        # Check if ARN retrieval was successful
             if [ -z "$TG_ARN" ]; then
               echo "Error: Failed to retrieve ARN from SSM."
               exit 1
