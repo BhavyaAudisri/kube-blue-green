@@ -1,0 +1,13 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: targetgroupbinding-creator-binding
+  namespace: expense
+subjects:
+- kind: ServiceAccount
+  name: aws-load-balancer-controller  # If you're using the default service account
+  namespace: expense
+roleRef:
+  kind: Role
+  name: targetgroupbinding-creator
+  apiGroup: rbac.authorization.k8s.io
