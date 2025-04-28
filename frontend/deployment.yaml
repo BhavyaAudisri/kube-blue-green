@@ -30,7 +30,7 @@ spec:
             - key: nginx.conf
               path: nginx.conf 
          
-    containers:
+  containers:
       - name: nginx
         image: bhavyasomisetti/frontend:1.1.0
         resources:
