@@ -83,10 +83,10 @@ spec:
       - name: targetgroup-volume
         emptyDir: {}  # Empty directory volume for storing the target group YAML
 
-  initContainers:
-  - name: fetch-parameter-store
-    image: amazon/aws-cli:latest
-    command:
+    initContainers:
+    - name: fetch-parameter-store
+      image: amazon/aws-cli:latest
+      command:
       - "/bin/sh"
       - "-c"
       - |
