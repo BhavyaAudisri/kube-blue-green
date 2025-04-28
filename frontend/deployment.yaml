@@ -21,7 +21,7 @@ spec:
         app: frontend
         tier: web
         project: expense
-    spec:
+  spec:
        volumes:
        - name: nginx
          configMap:
