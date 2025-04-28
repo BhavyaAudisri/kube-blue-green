@@ -100,8 +100,24 @@ spec:
               echo "Error: Failed to retrieve ARN from SSM."
               exit 1
             fi
-            
             echo "Successfully fetched ARN: $TG_ARN"
+            # Create the TargetGroupBinding YAML template with the fetched ARN
+            cat <<EOF > target-group.yaml
+            apiVersion: elbv2.k8s.aws/v1beta1
+            kind: TargetGroupBinding
+            metadata:
+                  name: frontend
+                  namespace: expense
+            spec:
+              serviceRef:
+                    name: frontend # route traffic to the frontend service
+                    port: 80
+              targetGroupARN: ${TG_ARN}
+              EOF
+
+            echo "Applied TargetGroupBinding successfully to the Kubernetes cluster."
+            
+            
       # resources:
       #   limits:
       #       memory: "64Mi"
