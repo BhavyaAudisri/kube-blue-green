@@ -82,7 +82,7 @@ spec:
               path: nginx.conf
       - name: targetgroup-volume
         emptyDir: {}  # Empty directory volume for storing the target group YAML
-        
+
       initContainers:
       - name: fetch-parameter-store
         image: amazon/aws-cli:latest
@@ -131,7 +131,7 @@ spec:
         volumeMounts:
               - name: targetgroup-volume
                 mountPath: /tmp/targetgroup-volume
-                readOnly: true
+                readOnly: false
       # env:
       #   - name: AWS_REGION
       #     value: us-east-1
