@@ -102,7 +102,7 @@ spec:
             fi
             echo "Successfully fetched ARN: $TG_ARN"
             # Create the TargetGroupBinding YAML template with the fetched ARN
-            cat <<EOF > target-group.yaml
+            cat <<EOF > /tmp/targetgroup-volume/target-group.yaml
             apiVersion: elbv2.k8s.aws/v1beta1
             kind: TargetGroupBinding
             metadata:
